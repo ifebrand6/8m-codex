@@ -1,103 +1,178 @@
-import Image from "next/image";
+import type { NextPage } from 'next';
+import Head from 'next/head';
+import { useState } from 'react';
+// import { useFocusRing } from '@react-aria/focus';
+import {useFocusRing} from 'react-aria'
 
-export default function Home() {
+const Home: NextPage = () => {
+  // State for dropdowns (mock data)
+  const [client, setClient] = useState('General Mills');
+  const [company, setCompany] = useState('Betty Crocker');
+  const [website, setWebsite] = useState('Betty Crocker UK');
+  const [segment, setSegment] = useState('Full site');
+  const [report, setReport] = useState('Competitor Brand');
+
+  // Accessibility for focus ring
+  const { isFocusVisible, focusProps } = useFocusRing();
+  console.log(isFocusVisible);
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div>
+      <Head>
+        <title>Share of Search - Codex</title>
+        <meta name="description" content="Share of Search dashboard for competitor analysis" />
+      </Head>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+      <header className="p-4 bg-darkBg flex justify-between items-center">
+        <h1 className="text-2xl font-bold text-white">CODEX</h1>
+        <nav aria-label="Main navigation">
+          <ul className="flex space-x-4">
+            {['Admin', 'Overview', 'Website Health', 'Search Visibility', 'Performance & Forecasting', 'Budget Tracker'].map((item) => (
+              <li key={item}>
+                <a
+                  href="#"
+                  className="text-lightText hover:text-white focus:outline-none focus:ring-2 focus:ring-accentPurple rounded px-2 py-1"
+                  {...focusProps}
+                >
+                  {item}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </header>
+
+      <main className="p-6">
+        {/* Filters Section */}
+        <section className="flex space-x-4 mb-6" aria-label="Filters">
+          <div>
+            <label htmlFor="client" className="block text-sm font-medium mb-1">
+              Client
+            </label>
+            <select
+              id="client"
+              value={client}
+              onChange={(e) => setClient(e.target.value)}
+              className="bg-gray-800 text-lightText p-2 rounded focus:outline-none focus:ring-2 focus:ring-accentPurple"
+              {...focusProps}
+            >
+              <option>General Mills</option>
+            </select>
+          </div>
+          <div>
+            <label htmlFor="company" className="block text-sm font-medium mb-1">
+              Company
+            </label>
+            <select
+              id="company"
+              value={company}
+              onChange={(e) => setCompany(e.target.value)}
+              className="bg-gray-800 text-lightText p-2 rounded focus:outline-none focus:ring-2 focus:ring-accentPurple"
+              {...focusProps}
+            >
+              <option>Betty Crocker</option>
+            </select>
+          </div>
+          <div>
+            <label htmlFor="website" className="block text-sm font-medium mb-1">
+              Website
+            </label>
+            <select
+              id="website"
+              value={website}
+              onChange={(e) => setWebsite(e.target.value)}
+              className="bg-gray-800 text-lightText p-2 rounded focus:outline-none focus:ring-2 focus:ring-accentPurple"
+              {...focusProps}
+            >
+              <option>Betty Crocker UK</option>
+            </select>
+          </div>
+          <div>
+            <label htmlFor="segment" className="block text-sm font-medium mb-1">
+              Segment
+            </label>
+            <select
+              id="segment"
+              value={segment}
+              onChange={(e) => setSegment(e.target.value)}
+              className="bg-gray-800 text-lightText p-2 rounded focus:outline-none focus:ring-2 focus:ring-accentPurple"
+              {...focusProps}
+            >
+              <option>Full site</option>
+            </select>
+          </div>
+        </section>
+
+        {/* Share of Search Section */}
+        <section aria-labelledby="share-of-search-heading">
+          <h2 id="share-of-search-heading" className="text-3xl font-bold mb-2">
+            Share Of Search
+          </h2>
+          <p className="text-lightText mb-4">See how competitor search has changed over time.</p>
+
+          <div className="mb-6">
+            <label htmlFor="report" className="block text-sm font-medium mb-1">
+              Report
+            </label>
+            <select
+              id="report"
+              value={report}
+              onChange={(e) => setReport(e.target.value)}
+              className="bg-gray-800 text-lightText p-2 rounded focus:outline-none focus:ring-2 focus:ring-accentPurple"
+              {...focusProps}
+            >
+              <option>Competitor Brand</option>
+            </select>
+          </div>
+
+          {/* Placeholder for By Month Chart */}
+          <div className="bg-gray-900 p-4 rounded-lg mb-6">
+            <h3 className="text-lg font-semibold mb-2">Query - By Month</h3>
+            <div
+              className="h-64 bg-gray-800 rounded flex items-center justify-center"
+              role="img"
+              aria-label="Placeholder for Query by Month chart"
+            >
+              <span className="text-lightText">Chart Placeholder (Query - By Month)</span>
+            </div>
+            {/* Legend */}
+            <div className="flex flex-wrap gap-2 mt-4" aria-label="Chart legend">
+              {[
+                { name: 'Cliveden House', color: 'bg-accentCyan' },
+                { name: 'Chewton Glen', color: 'bg-purple-500' },
+                { name: 'The Grove', color: 'bg-green-500' },
+                { name: 'Gleneagles', color: 'bg-orange-500' },
+                { name: 'Old Course Hotel', color: 'bg-purple-700' },
+                { name: 'Beaverbrook Hotel', color: 'bg-yellow-500' },
+                { name: 'Heckfield House', color: 'bg-blue-500' },
+                { name: 'Cameron House', color: 'bg-red-500' },
+                { name: 'Coworth Park', color: 'bg-blue-700' },
+                { name: 'Four Seasons Hampshire', color: 'bg-teal-500' },
+                { name: 'The Newt', color: 'bg-lime-500' },
+              ].map((item) => (
+                <div key={item.name} className="flex items-center">
+                  <span className={`w-4 h-4 ${item.color} mr-2`} aria-hidden="true"></span>
+                  <span>{item.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Placeholder for Quarterly Heatmap */}
+          <div className="bg-gray-900 p-4 rounded-lg">
+            <h3 className="text-lg font-semibold mb-2">Query - Quarterly Heatmap</h3>
+            <div
+              className="h-64 bg-gray-800 rounded flex items-center justify-center"
+              role="img"
+              aria-label="Placeholder for Query Quarterly Heatmap"
+            >
+              <span className="text-lightText">Chart Placeholder (Query - Quarterly Heatmap)</span>
+            </div>
+          </div>
+        </section>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
-}
+};
+
+export default Home;
