@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --chart-1: 160 94% 43%;
+  --chart-2: 262 83% 58%;
+  --chart-3: 142 69% 58%;
+  --chart-4: 32 94% 56%;
+  --chart-5: 262 83% 58%;
+  --chart-6: 48 96% 53%;
+  --chart-7: 217 91% 60%;
+  --chart-8: 0 91% 71%;
+  --chart-9: 262 83% 58%;
+  --chart-10: 217 91% 60%;
+}
+
+body {
+  @apply bg-zinc-900 text-white;
+}
+
+/* Focus styles for accessibility */
+:focus-visible {
+  @apply outline-2 outline-offset-2 outline-white;
+}
+
+/* Skip to content link for keyboard users */
+.skip-to-content {
+  @apply sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-zinc-800 focus:text-white focus:rounded;
+}
+
