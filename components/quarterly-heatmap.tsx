@@ -1,82 +1,103 @@
-"use client"
+// src/components/QuarterlyHeatmap.tsx
+"use client";
 
-import React from "react"
+import React, { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import HeatMapChart from "./charts/heatmapChart";
+import { quarters, heatmapData as mockHeatmapData, HeatmapEntry } from "@/lib/data/heatmapData";
+import dynamic from 'next/dynamic';
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+const DynamicHeatMapChart = dynamic(() => import('./charts/heatmapChart'), {
+  ssr: false,
+  loading: () => <p>Loading chart...</p>,
+});
 
-// This is a placeholder component for the quarterly heatmap
 export default function QuarterlyHeatmap() {
-  // Heatmap data would normally be passed as props or fetched here
+  const [heatmapEntries, setHeatmapEntries] = useState<HeatmapEntry[]>([]);
+  const [yCategories, setYCategories] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Generate a sample color based on value
-  const getHeatmapColor = (value: number) => {
-    if (value < 25) return "bg-teal-400"
-    if (value < 50) return "bg-green-400"
-    if (value < 75) return "bg-yellow-400"
-    return "bg-red-500"
+  useEffect(() => {
+    const fetchHeatmapData = async () => {
+      try {
+        setLoading(true);
+        const data = mockHeatmapData; // Mock data for now
+        setHeatmapEntries(data);
+        setYCategories(data.map((entry: HeatmapEntry) => entry.hotel));
+        setError(null);
+      } catch (err) {
+        setError('Failed to fetch heatmap data');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHeatmapData();
+  }, []);
+
+  const highchartsData = heatmapEntries.flatMap((entry, yIndex) =>
+    entry.points.map((value, xIndex) => [xIndex, yIndex, value] as [number, number, number])
+  );
+
+  const seriesData: Highcharts.SeriesHeatmapOptions[] = [
+    {
+      type: 'heatmap',
+      name: 'Search Interest',
+      borderWidth: 1,
+      borderColor: '#4b5563',
+      data: highchartsData,
+      dataLabels: {
+        enabled: true,
+        color: '#d1d5db',
+        style: { textOutline: 'none' },
+      },
+    },
+  ];
+
+  if (loading) {
+    return (
+      <Card className="bg-zinc-800 border-grey-700 rounded-xl">
+        <CardHeader>
+          <CardTitle className="text-xl text-gray-200">Query - Quarterly Heatmap</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-gray-300">Loading...</div>
+        </CardContent>
+      </Card>
+    );
   }
 
-  // Generate sample data for the heatmap
-  const generateHeatmapData = () => {
-    const hotels = [
-      "The Newt",
-      "Four Seasons Hampshire",
-      "Coworth Park",
-      "Cameron House",
-      "Hedfield House",
-      "Beaverbrook Hotel",
-      "Old Course Hotel",
-      "Chewton Glen",
-      "The Grove",
-      "Cliveden House",
-    ]
-
-    const quarters = [
-      "Q2",
-      "Q3",
-      "Q4",
-      "Q1",
-      "Q2",
-      "Q3",
-      "Q4",
-      "Q1",
-      "Q2",
-      "Q3",
-      "Q4",
-      "Q1",
-      "Q2",
-      "Q3",
-      "Q4",
-      "Q1",
-      "Q2",
-    ]
-    const years = [2019, 2020, 2021, 2022, 2023]
-
-    return hotels.map((hotel) => ({
-      name: hotel,
-      values: quarters.map(() => Math.floor(Math.random() * 100)),
-    }))
+  if (error) {
+    return (
+      <Card className="bg-zinc-800 border-grey-700 rounded-xl">
+        <CardHeader>
+          <CardTitle className="text-xl text-gray-200">Query - Quarterly Heatmap</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-red-500">{error}</div>
+        </CardContent>
+      </Card>
+    );
   }
-
-  const heatmapData = generateHeatmapData()
 
   return (
     <Card className="bg-zinc-800 border-grey-700 rounded-xl">
       <CardHeader>
-        <CardTitle className="text-xl">Query - Quarterly Heatmap</CardTitle>
+        <CardTitle className="text-xl text-gray-200">Query - Quarterly Heatmap</CardTitle>
       </CardHeader>
       <CardContent>
         <div
           className="overflow-x-auto"
-          role="img"
+          role="region"
           aria-label="Quarterly heatmap showing search performance across different competitors from 2019 to 2023"
         >
-          <div className="min-w-[800px] h-[400px] bg-gray-900">
-           {/*TODO CHARTS GOES HERE */}
-          </div>
+
+          <DynamicHeatMapChart seriesData={seriesData} categories={quarters}  yCategories={yCategories} heatmapEntries={heatmapEntries}/>
+
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
-

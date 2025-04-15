@@ -1,28 +1,29 @@
 "use client"
 
+import { useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+
+import MultiLineHighChart from "@/components/charts/lineChart";
+import { highchartSeriesData, categories } from "@/lib/data/lineChartData";
 
 // This is a placeholder component for the monthly query chart
 export default function MonthlyQueryChart() {
-  // Chart data would normally be passed as props or fetched here
-//CHART DATA IS PASSED AS PROPS HERE
   return (
     <Card className="bg-zinc-800 border-grey-700 rounded-xl">
       <CardHeader>
         <CardTitle className="text-xl">Query - By Month</CardTitle>
       </CardHeader>
       <CardContent>
-        {/* Chart placeholder */}
         <div
           className="relative h-[400px] w-full rounded-md bg-zinc-900 p-4"
           role="img"
           aria-label="Monthly query chart showing search trends over time for different competitors"
         >
-         {/*TODO CHARTS GOES HERE */}
+         <MultiLineHighChart seriesData={highchartSeriesData} categories={categories} />
         </div>
 
         {/* Legend */}
-        <div className="mt-4 grid grid-cols-2 md:grid-cols-5 gap-2">
+        <div className="mt-4 grid grid-cols-2 md:grid-cols-5 gap-2 hidden">
           {[
             { name: "Cliveden House", color: "bg-teal-400" },
             { name: "Chewton Glen", color: "bg-purple-500" },
