@@ -19,7 +19,7 @@ const DynamicLineChart = dynamic(() => import('./charts/lineChart'), {
 });
 
 const MonthlyQueryChart = React.memo(function MonthlyQueryChart() {
-  const { data, isLoading } = useChartData('/api/chart-data/monthly');
+  const { data, isLoading } = useChartData<{ seriesData: any[]; categories: string[] }>('/api/chart-data/monthly');
 
   return (
     <ErrorBoundary>
@@ -55,37 +55,6 @@ const MonthlyQueryChart = React.memo(function MonthlyQueryChart() {
             )}
           </div>
 
-          {/* Legend */}
-          <div
-            className="mt-4 grid grid-cols-2 md:grid-cols-5 gap-2 "
-            role="list"
-            aria-label="Chart legend"
-          >
-            {[
-              { name: "Cliveden House", color: "bg-teal-400" },
-              { name: "Chewton Glen", color: "bg-purple-500" },
-              { name: "The Grove", color: "bg-green-400" },
-              { name: "Gleneagles", color: "bg-orange-400" },
-              { name: "Old Course Hotel", color: "bg-purple-400" },
-              { name: "Beaverbrook Hotel", color: "bg-yellow-400" },
-              { name: "Hedfield House", color: "bg-blue-400" },
-              { name: "Cameron House", color: "bg-red-500" },
-              { name: "Coworth Park", color: "bg-indigo-400" },
-              { name: "Four Seasons Hampshire", color: "bg-blue-500" },
-            ].map((item) => (
-              <div
-                key={item.name}
-                className="flex items-center gap-2"
-                role="listitem"
-              >
-                <div
-                  className={`h-3 w-3 ${item.color}`}
-                  aria-hidden="true"
-                />
-                <div className="text-xs">{item.name}</div>
-              </div>
-            ))}
-          </div>
         </CardContent>
       </Card>
     </ErrorBoundary>

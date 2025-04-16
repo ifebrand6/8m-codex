@@ -84,9 +84,15 @@ export default function MultiLineHighChart({ seriesData, categories }: Props) {
     credits: {
       enabled: false,
     },
-    legend: {
-        enabled: true, // No legend
-        itemStyle: {color: '#fff'}
+     legend: {
+        itemStyle: {color: '#fff', fontSize: '12'},
+        itemDistance: 30,
+        itemMarginTop: 10,
+        squareSymbol: true,
+        symbolHeight: 15,
+        symbolWidth: 15,
+        symbolPadding: 5,
+        symbolRadius: 2,
     },
     plotOptions: {
         line: {
