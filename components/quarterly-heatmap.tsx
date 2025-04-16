@@ -1,4 +1,3 @@
-// src/components/QuarterlyHeatmap.tsx
 "use client";
 
 import React from 'react';
