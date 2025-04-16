@@ -1,12 +1,14 @@
 // src/components/QuarterlyHeatmap.tsx
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { quarters, heatmapData as mockHeatmapData, HeatmapEntry } from "@/lib/data/heatmapData";
 import dynamic from 'next/dynamic';
+import { useChartData } from '@/lib/hooks/useChartData';
+import { ErrorBoundary } from './error-boundary';
+import type { SeriesHeatmapOptions } from 'highcharts';
 
-const DynamicHeatMapChart = dynamic(() => import('./charts/heatmapChart'), {
+const DynamicHeatmap = dynamic(() => import('./charts/heatmapChart'), {
   ssr: false,
   loading: () => (
     <div
@@ -19,141 +21,71 @@ const DynamicHeatMapChart = dynamic(() => import('./charts/heatmapChart'), {
   ),
 });
 
+interface HeatmapData {
+  data: Array<{
+    x: number;
+    y: number;
+    value: number;
+    name: string;
+  }>;
+  xCategories: string[];
+  yCategories: string[];
+}
+
 const QuarterlyHeatmap = React.memo(function QuarterlyHeatmap() {
-  const [heatmapEntries, setHeatmapEntries] = useState<HeatmapEntry[]>([]);
-  const [yCategories, setYCategories] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, isLoading } = useChartData<HeatmapData>('/api/chart-data/quarterly');
 
-  useEffect(() => {
-    const fetchHeatmapData = async () => {
-      try {
-        setLoading(true);
-        const data = mockHeatmapData;
-        setHeatmapEntries(data);
-        setYCategories(data.map((entry: HeatmapEntry) => entry.hotel));
-        setError(null);
-      } catch (err) {
-        setError('Failed to fetch heatmap data');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchHeatmapData();
-  }, []);
-
-  // Memoize the data processing
-  const highchartsData = useMemo(() =>
-    heatmapEntries.flatMap((entry, yIndex) =>
-      entry.points.map((value, xIndex) => [xIndex, yIndex, value] as [number, number, number])
-    ),
-    [heatmapEntries]
-  );
-
-  // Memoize the series data
-  const seriesData = useMemo<Highcharts.SeriesHeatmapOptions[]>(() => [
-    {
-      type: 'heatmap',
-      name: 'Search Interest',
-      borderWidth: 1,
-      borderColor: '#4b5563',
-      data: highchartsData,
-      dataLabels: {
-        enabled: true,
-        color: '#d1d5db',
-        style: { textOutline: 'none' },
-      },
+  const seriesData: SeriesHeatmapOptions[] = React.useMemo(() => [{
+    type: 'heatmap',
+    name: 'Search Interest',
+    borderWidth: 1,
+    borderColor: '#4b5563',
+    data: data?.data.map(point => [point.x, point.y, point.value]) || [],
+    dataLabels: {
+      enabled: true,
+      color: '#d1d5db',
+      style: { textOutline: 'none' },
     },
-  ], [highchartsData]);
-
-  if (loading) {
-    return (
-      <Card
-        className="bg-zinc-800 border-grey-700 rounded-xl"
-        role="region"
-        aria-labelledby="quarterly-heatmap-title"
-      >
-        <CardHeader>
-          <CardTitle
-            id="quarterly-heatmap-title"
-            className="text-xl text-gray-200"
-          >
-            Query - Quarterly Heatmap
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div
-            role="status"
-            aria-label="Loading heatmap data"
-            className="text-gray-300"
-          >
-            Loading...
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (error) {
-    return (
-      <Card
-        className="bg-zinc-800 border-grey-700 rounded-xl"
-        role="region"
-        aria-labelledby="quarterly-heatmap-title"
-      >
-        <CardHeader>
-          <CardTitle
-            id="quarterly-heatmap-title"
-            className="text-xl text-gray-200"
-          >
-            Query - Quarterly Heatmap
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div
-            role="alert"
-            aria-live="polite"
-            className="text-red-500"
-          >
-            {error}
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
+  }], [data]);
 
   return (
-    <Card
-      className="bg-zinc-800 border-grey-700 rounded-xl"
-      role="region"
-      aria-labelledby="quarterly-heatmap-title"
-    >
-      <CardHeader>
-        <CardTitle
-          id="quarterly-heatmap-title"
-          className="text-xl text-gray-200"
-        >
-          Query - Quarterly Heatmap
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div
-          className="overflow-x-auto"
-          role="region"
-          aria-label="Quarterly heatmap showing search performance across different competitors from 2019 to 2023"
-          tabIndex={0}
-        >
-          <DynamicHeatMapChart
-            seriesData={seriesData}
-            categories={quarters}
-            yCategories={yCategories}
-            heatmapEntries={heatmapEntries}
-          />
-        </div>
-      </CardContent>
-    </Card>
+    <ErrorBoundary>
+      <Card
+        className="bg-zinc-800 border-grey-700 rounded-xl"
+        role="region"
+        aria-labelledby="quarterly-heatmap-title"
+      >
+        <CardHeader>
+          <CardTitle
+            id="quarterly-heatmap-title"
+            className="text-xl"
+          >
+            Query - By Quarter
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div
+            className="relative h-[400px] w-full rounded-md bg-zinc-900 p-4"
+            role="img"
+            aria-label="Quarterly heatmap showing search performance across competitors"
+            tabIndex={0}
+          >
+            {isLoading ? (
+              <div className="flex items-center justify-center h-full">
+                <p className="text-gray-400">Loading heatmap data...</p>
+              </div>
+            ) : (
+              <DynamicHeatmap
+                seriesData={seriesData}
+                categories={data?.xCategories || []}
+                yCategories={data?.yCategories || []}
+                heatmapEntries={data?.data || []}
+              />
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </ErrorBoundary>
   );
 });
 

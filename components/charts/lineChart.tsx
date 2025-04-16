@@ -65,16 +65,16 @@ export default function MultiLineHighChart({ seriesData, categories }: Props) {
             rotation: 0, // Horizontal labels
             y: 20,// Position below ticks
            style: {
-            color: '#ffffff' // Example: light gray, matching your existing axis labels
+            color: '#ffffff'
            }
         }
     },
     yAxis: {
       title: { text: "Search Interest", style: {
-            color: '#ffffff' // Example: light gray, matching your existing axis labels
+            color: '#ffffff'
            } },  //TODO should be a variable
        labels: {style: {
-            color: '#ffffff' // Example: light gray, matching your existing axis labels
+            color: '#ffffff'
            }}
     },
     tooltip: {
