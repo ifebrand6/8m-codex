@@ -7,16 +7,16 @@ export default function DashboardHeader() {
   const [activeTab, setActiveTab] = useState("search-visibility")
 
   return (
-    <header className="border-b border-zinc-800">
+    <header className="border-b border-zinc-800" role="banner">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between py-4">
           <div className="flex items-center gap-8">
-            <div className="text-2xl font-bold text-white">
+            <div className="text-2xl font-bold text-white" role="img" aria-label="Codex Logo">
               c<span className="text-gray-400">o</span>dex
             </div>
 
-            <nav className="hidden md:block">
-              <ul className="flex space-x-1" role="menubar" aria-label="Main Navigation">
+            <nav className="hidden md:block" aria-label="Main Navigation">
+              <ul className="flex space-x-1" role="menubar">
                 {[
                   { id: "admin", label: "Admin" },
                   { id: "overview", label: "Overview" },
@@ -33,9 +33,10 @@ export default function DashboardHeader() {
                       }`}
                       onClick={() => setActiveTab(item.id)}
                       aria-current={activeTab === item.id ? "page" : undefined}
+                      aria-label={`${item.label} section`}
                     >
                       {item.label}
-                      <ChevronDown className="ml-1 h-4 w-4" />
+                      <ChevronDown className="ml-1 h-4 w-4" aria-hidden="true" />
                     </button>
                   </li>
                 ))}
@@ -45,10 +46,11 @@ export default function DashboardHeader() {
 
           <div className="flex items-center">
             <button
-              aria-label="User profile"
+              aria-label="User profile menu"
               className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-700"
+              aria-haspopup="true"
             >
-              <User className="h-5 w-5" />
+              <User className="h-5 w-5" aria-hidden="true" />
             </button>
           </div>
         </div>

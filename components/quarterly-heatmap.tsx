@@ -1,18 +1,25 @@
 // src/components/QuarterlyHeatmap.tsx
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import HeatMapChart from "./charts/heatmapChart";
 import { quarters, heatmapData as mockHeatmapData, HeatmapEntry } from "@/lib/data/heatmapData";
 import dynamic from 'next/dynamic';
 
 const DynamicHeatMapChart = dynamic(() => import('./charts/heatmapChart'), {
   ssr: false,
-  loading: () => <p>Loading chart...</p>,
+  loading: () => (
+    <div
+      role="status"
+      aria-label="Loading heatmap data"
+      className="flex items-center justify-center h-full"
+    >
+      <p className="text-gray-400">Loading heatmap data...</p>
+    </div>
+  ),
 });
 
-export default function QuarterlyHeatmap() {
+const QuarterlyHeatmap = React.memo(function QuarterlyHeatmap() {
   const [heatmapEntries, setHeatmapEntries] = useState<HeatmapEntry[]>([]);
   const [yCategories, setYCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -22,7 +29,7 @@ export default function QuarterlyHeatmap() {
     const fetchHeatmapData = async () => {
       try {
         setLoading(true);
-        const data = mockHeatmapData; // Mock data for now
+        const data = mockHeatmapData;
         setHeatmapEntries(data);
         setYCategories(data.map((entry: HeatmapEntry) => entry.hotel));
         setError(null);
@@ -37,11 +44,16 @@ export default function QuarterlyHeatmap() {
     fetchHeatmapData();
   }, []);
 
-  const highchartsData = heatmapEntries.flatMap((entry, yIndex) =>
-    entry.points.map((value, xIndex) => [xIndex, yIndex, value] as [number, number, number])
+  // Memoize the data processing
+  const highchartsData = useMemo(() =>
+    heatmapEntries.flatMap((entry, yIndex) =>
+      entry.points.map((value, xIndex) => [xIndex, yIndex, value] as [number, number, number])
+    ),
+    [heatmapEntries]
   );
 
-  const seriesData: Highcharts.SeriesHeatmapOptions[] = [
+  // Memoize the series data
+  const seriesData = useMemo<Highcharts.SeriesHeatmapOptions[]>(() => [
     {
       type: 'heatmap',
       name: 'Search Interest',
@@ -54,16 +66,31 @@ export default function QuarterlyHeatmap() {
         style: { textOutline: 'none' },
       },
     },
-  ];
+  ], [highchartsData]);
 
   if (loading) {
     return (
-      <Card className="bg-zinc-800 border-grey-700 rounded-xl">
+      <Card
+        className="bg-zinc-800 border-grey-700 rounded-xl"
+        role="region"
+        aria-labelledby="quarterly-heatmap-title"
+      >
         <CardHeader>
-          <CardTitle className="text-xl text-gray-200">Query - Quarterly Heatmap</CardTitle>
+          <CardTitle
+            id="quarterly-heatmap-title"
+            className="text-xl text-gray-200"
+          >
+            Query - Quarterly Heatmap
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-gray-300">Loading...</div>
+          <div
+            role="status"
+            aria-label="Loading heatmap data"
+            className="text-gray-300"
+          >
+            Loading...
+          </div>
         </CardContent>
       </Card>
     );
@@ -71,33 +98,63 @@ export default function QuarterlyHeatmap() {
 
   if (error) {
     return (
-      <Card className="bg-zinc-800 border-grey-700 rounded-xl">
+      <Card
+        className="bg-zinc-800 border-grey-700 rounded-xl"
+        role="region"
+        aria-labelledby="quarterly-heatmap-title"
+      >
         <CardHeader>
-          <CardTitle className="text-xl text-gray-200">Query - Quarterly Heatmap</CardTitle>
+          <CardTitle
+            id="quarterly-heatmap-title"
+            className="text-xl text-gray-200"
+          >
+            Query - Quarterly Heatmap
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-red-500">{error}</div>
+          <div
+            role="alert"
+            aria-live="polite"
+            className="text-red-500"
+          >
+            {error}
+          </div>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card className="bg-zinc-800 border-grey-700 rounded-xl">
+    <Card
+      className="bg-zinc-800 border-grey-700 rounded-xl"
+      role="region"
+      aria-labelledby="quarterly-heatmap-title"
+    >
       <CardHeader>
-        <CardTitle className="text-xl text-gray-200">Query - Quarterly Heatmap</CardTitle>
+        <CardTitle
+          id="quarterly-heatmap-title"
+          className="text-xl text-gray-200"
+        >
+          Query - Quarterly Heatmap
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <div
           className="overflow-x-auto"
           role="region"
           aria-label="Quarterly heatmap showing search performance across different competitors from 2019 to 2023"
+          tabIndex={0}
         >
-
-          <DynamicHeatMapChart seriesData={seriesData} categories={quarters}  yCategories={yCategories} heatmapEntries={heatmapEntries}/>
-
+          <DynamicHeatMapChart
+            seriesData={seriesData}
+            categories={quarters}
+            yCategories={yCategories}
+            heatmapEntries={heatmapEntries}
+          />
         </div>
       </CardContent>
     </Card>
   );
-}
+});
+
+export default QuarterlyHeatmap;
