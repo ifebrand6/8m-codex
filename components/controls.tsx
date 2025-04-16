@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useMemo } from "react";
 import {
   Select,
   SelectContent,
@@ -8,9 +9,34 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export default function Controls() {
+const Controls = React.memo(function Controls() {
+  // Memoize the select options
+  const clientOptions = useMemo(() => [
+    { value: "general-mills", label: "General Mills" },
+    { value: "other-client", label: "Other Client" },
+  ], []);
+
+  const companyOptions = useMemo(() => [
+    { value: "betty-crocker", label: "Betty Crocker" },
+    { value: "other-company", label: "Other Company" },
+  ], []);
+
+  const websiteOptions = useMemo(() => [
+    { value: "betty-crocker-uk", label: "Betty Crocker UK" },
+    { value: "other-website", label: "Other Website" },
+  ], []);
+
+  const segmentOptions = useMemo(() => [
+    { value: "full-site", label: "Full site" },
+    { value: "other-segment", label: "Other Segment" },
+  ], []);
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 py-4">
+    <div
+      className="grid grid-cols-1 md:grid-cols-4 gap-4 py-4"
+      role="group"
+      aria-label="Dashboard Filters"
+    >
       <div>
         <label
           htmlFor="client-select"
@@ -22,12 +48,20 @@ export default function Controls() {
           <SelectTrigger
             id="client-select"
             className="w-full bg-zinc-800 border-grey-700"
+            aria-label="Select client"
           >
             <SelectValue placeholder="Select client" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="general-mills">General Mills</SelectItem>
-            <SelectItem value="other-client">Other Client</SelectItem>
+            {clientOptions.map((option) => (
+              <SelectItem
+                key={option.value}
+                value={option.value}
+                aria-label={option.label}
+              >
+                {option.label}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
@@ -43,12 +77,20 @@ export default function Controls() {
           <SelectTrigger
             id="company-select"
             className="w-full bg-zinc-800 border-grey-700"
+            aria-label="Select company"
           >
             <SelectValue placeholder="Select company" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="betty-crocker">Betty Crocker</SelectItem>
-            <SelectItem value="other-company">Other Company</SelectItem>
+            {companyOptions.map((option) => (
+              <SelectItem
+                key={option.value}
+                value={option.value}
+                aria-label={option.label}
+              >
+                {option.label}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
@@ -64,12 +106,20 @@ export default function Controls() {
           <SelectTrigger
             id="website-select"
             className="w-full bg-zinc-800 border-grey-700"
+            aria-label="Select website"
           >
             <SelectValue placeholder="Select website" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="betty-crocker-uk">Betty Crocker UK</SelectItem>
-            <SelectItem value="other-website">Other Website</SelectItem>
+            {websiteOptions.map((option) => (
+              <SelectItem
+                key={option.value}
+                value={option.value}
+                aria-label={option.label}
+              >
+                {option.label}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
@@ -85,15 +135,25 @@ export default function Controls() {
           <SelectTrigger
             id="segment-select"
             className="w-full bg-zinc-800 border-grey-700"
+            aria-label="Select segment"
           >
             <SelectValue placeholder="Select segment" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="full-site">Full site</SelectItem>
-            <SelectItem value="other-segment">Other Segment</SelectItem>
+            {segmentOptions.map((option) => (
+              <SelectItem
+                key={option.value}
+                value={option.value}
+                aria-label={option.label}
+              >
+                {option.label}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
     </div>
   );
-}
+});
+
+export default Controls;

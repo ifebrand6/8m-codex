@@ -6,6 +6,8 @@ import HighchartsReact from "highcharts-react-official";
 import type { HighchartsReactRefObject } from "highcharts-react-official";
 import type { SeriesLineOptions } from "highcharts";
 
+import 'highcharts/modules/accessibility';
+
 interface Props {
   seriesData: SeriesLineOptions[];
   categories: string[];
@@ -19,6 +21,27 @@ export default function MultiLineHighChart({ seriesData, categories }: Props) {
       type: "line",
       spacing: [20, 10, 15, 10],
       backgroundColor: 'transparent', // Black background
+    },
+    accessibility: {
+      enabled: true,
+      keyboardNavigation: {
+        enabled: true,
+        focusBorder: {
+          enabled: true,
+          style: {
+            borderColor: '#ffffff',
+            borderWidth: 2
+          }
+        }
+      },
+      screenReaderSection: {
+        beforeChartFormat: '<h5>{chartTitle}</h5><div>{chartSubtitle}</div><div>{chartLongdesc}</div>',
+        afterChartFormat: '<div>{chartCaption}</div>'
+      },
+      description: 'Line chart showing search interest trends over time. Each line represents a different data series.',
+      point: {
+        valueDescriptionFormat: '{point.name}: {point.y}'
+      }
     },
     title: {
       text: "",

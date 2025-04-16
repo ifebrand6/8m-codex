@@ -1,11 +1,10 @@
-import { useRef } from "react";
-import React from 'react';
-import Highcharts, { color } from 'highcharts';
+import { useRef } from 'react';
+import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
-import type { HighchartsReactRefObject } from "highcharts-react-official";
+import type { HighchartsReactRefObject } from 'highcharts-react-official';
 
-import 'highcharts/modules/heatmap'; // Module is auto-initialized in v12
-
+import 'highcharts/modules/heatmap';
+import 'highcharts/modules/accessibility';
 
 interface Props {
   seriesData: Highcharts.SeriesHeatmapOptions[];
@@ -15,21 +14,24 @@ interface Props {
 }
 
 const HeatMapChart = ({ seriesData, categories, yCategories, heatmapEntries }: Props) => {
-const chartRef = useRef<HighchartsReactRefObject>(null);
+  const chartRef = useRef<HighchartsReactRefObject>(null);
 
-  const options = {
+  const options: Highcharts.Options = {
     chart: {
       type: 'heatmap',
-      backgroundColor: "#18181b",
+      backgroundColor: '#18181b',
+      className: 'heatmap-chart', // Unique class for this chart
     },
-    title: "",
+    title: {
+      text: '',
+    },
     xAxis: {
       categories,
       accessibility: {
-        rangeDescription: 'Range: Q2 2019 to Q2 2023', //TODO should be a variable
+        rangeDescription: 'Range: Q2 2019 to Q2 2023',
       },
       title: {
-        text: 'Quarter',  //TODO should be a variable
+        text: 'Quarter',
         align: 'low',
         offset: 40,
         style: {
@@ -48,7 +50,7 @@ const chartRef = useRef<HighchartsReactRefObject>(null);
     yAxis: {
       categories: yCategories,
       title: {
-        text: 'Hotels', //TODO should be a variable
+        text: 'Hotels',
         style: { color: '#d1d5db' },
       },
       labels: {
@@ -56,25 +58,15 @@ const chartRef = useRef<HighchartsReactRefObject>(null);
       },
     },
     colorAxis: {
-  stops: [
-    [0, '#BBDEFB'], // Light blue
-    [0.33, '#4FC3F7'], // Cyan
-    [0.66, '#FFCA28'], // Yellow
-    [1, '#FF5722'], // Orange
-  ],
-  min: 1,
-  max: 17,
-  labels: {
-    style: {
-      fontSize: '12px',
-      color: '#E5E7EB',
-      fontWeight: 'normal',
+      stops: [
+        [0, '#BBDEFB'], // Light blue
+        [0.33, '#4FC3F7'], // Cyan
+        [0.66, '#FFCA28'], // Yellow
+        [1, '#FF5722'], // Orange
+      ],
+      min: 1,
+      max: 17,
     },
-    formatter(this: Highcharts.AxisLabelsFormatterContextObject): string {
-      return `<span style="color: #E5E7EB; font-size: 12px;">${this.value}</span>`;
-    },
-  },
-},
     tooltip: {
       shared: true,
     },
@@ -86,11 +78,29 @@ const chartRef = useRef<HighchartsReactRefObject>(null);
       enabled: false,
     },
     accessibility: {
-      description: 'Heatmap showing quarterly search interest for hotels from Q2 2019 to Q2 2023.',
+      enabled: true,
+      keyboardNavigation: {
+        enabled: true,
+        focusBorder: {
+          enabled: true,
+          style: {
+            borderColor: '#ffffff',
+            borderWidth: 2
+          }
+        }
+      },
+      screenReaderSection: {
+        beforeChartFormat: '<h5>{chartTitle}</h5><div>{chartSubtitle}</div><div>{chartLongdesc}</div>',
+        afterChartFormat: '<div>{chartCaption}</div>'
+      },
+      description: 'Heatmap showing quarterly search interest for hotels from Q2 2019 to Q2 2023. The color intensity represents the level of search interest, with darker colors indicating higher interest.',
+      point: {
+        valueDescriptionFormat: '{point.name}: {point.value}'
+      }
     },
   };
 
-  return <HighchartsReact highcharts={Highcharts} options={options} ref={chartRef}/>;
+  return <HighchartsReact highcharts={Highcharts} options={options} ref={chartRef} />;
 };
 
 export default HeatMapChart;
