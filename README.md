@@ -4,7 +4,7 @@ This project is a take-home technical assignment that replicates the attached UI
 
 ## 🌐 Live Demo
 Deployed on Vercel
-🔗 [https://8m-codex-2tamw1gou-ifechukwu-udeogus-projects.vercel.app/]
+🔗 [https://8m-codex.vercel.app/]
 
 ## 🚀 Features
 
@@ -45,7 +45,7 @@ Deployed on Vercel
 
 1. Clone the repository:
    ```bash
-   git clone [repository-url]
+   git clone [https://github.com/ifebrand6/8m-codex/]
    cd codex-dashboard
    ```
 
@@ -95,6 +95,7 @@ codex-dashboard/
 - [ ] Add more interactive features
 - [ ] Enhance data filtering capabilities
 - [ ] Implement real-time data updates
+- [ ] Add background effect to match with UI
 
 ## 📚 Resources
 
