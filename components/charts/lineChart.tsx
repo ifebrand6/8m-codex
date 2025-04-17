@@ -66,7 +66,11 @@ export default function MultiLineHighChart({ seriesData, categories }: Props) {
             y: 20,// Position below ticks
            style: {
             color: '#ffffff'
-           }
+           },
+          formatter: function (this: Highcharts.AxisLabelsFormatterContextObject) {
+          const [year, month] = this.value.toString().split('-');
+          return `${month}`;
+        },
         }
     },
     yAxis: {
