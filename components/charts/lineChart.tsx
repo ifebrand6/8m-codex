@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import type { HighchartsReactRefObject } from "highcharts-react-official";
-import type { SeriesLineOptions } from "highcharts";
+import type { SeriesLineOptions, PointerEventObject, SeriesClickEventObject } from "highcharts";
+import { trackChartInteraction, trackDataLoad } from "@/lib/analytics";
 
 import 'highcharts/modules/accessibility';
 
@@ -15,12 +16,32 @@ interface Props {
 
 export default function MultiLineHighChart({ seriesData, categories }: Props) {
   const chartRef = useRef<HighchartsReactRefObject>(null);
+  const loadStartTime = useRef<number>(Date.now());
+
+  useEffect(() => {
+    // Track initial data load
+    trackDataLoad('line_chart', 'success', Date.now() - loadStartTime.current);
+  }, []);
 
   const options: Highcharts.Options = {
     chart: {
       type: "line",
       spacing: [20, 10, 15, 10],
       backgroundColor: 'transparent', // Black background
+      events: {
+        load: function() {
+          trackChartInteraction('line_chart', 'chart_loaded');
+        },
+        click: function(event: PointerEventObject) {
+          const point = this.hoverPoint;
+          if (point) {
+            trackChartInteraction('line_chart', 'chart_clicked', {
+              x: point.x,
+              y: point.y
+            });
+          }
+        }
+      }
     },
     accessibility: {
       enabled: true,
@@ -106,6 +127,19 @@ export default function MultiLineHighChart({ seriesData, categories }: Props) {
             lineWidth: 2, // Thicker lines
             accessibility: {
                 keyboardNavigation: {enabled: true}
+            },
+            events: {
+              click: function(this: Highcharts.Series, event: SeriesClickEventObject) {
+                trackChartInteraction('line_chart', 'line_clicked', {
+                  series: this.name,
+                  point: event.point.y
+                });
+              },
+              mouseOver: function() {
+                trackChartInteraction('line_chart', 'line_hover', {
+                  series: this.name
+                });
+              }
             }
         }
     },
