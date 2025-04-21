@@ -4,6 +4,7 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { Providers } from "@/components/providers"
 import GoogleAnalytics from "@/components/google-analytics"
+import GoogleTagManager from "@/components/google-tag-manager"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -20,6 +21,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <GoogleTagManager />
+      </head>
       <body className={inter.className}>
         <a href="#main-content" className="skip-to-content">
           Skip to content
@@ -28,6 +32,7 @@ export default function RootLayout({
           {children}
         </Providers>
         <GoogleAnalytics />
+        <GoogleTagManager />
       </body>
     </html>
   )
